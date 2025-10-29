@@ -1,0 +1,164 @@
+==================================================================
+
+[공통 요구 사항]
+언제 어디서든 다음과 같은 공통 규칙들을 지켜줘.
+- [1] C# 파일명 및 클래스 이름은 GameObject의 이름과 동일하게 해줘.
+- [2] 게임 오브젝트를 참조하는 변수 이름은, 그 게임 오브젝트 이름과 동일하게 해줘. 단, 대소문자는 달라도 상관없어.
+- [3] private 변수는 _에 소문자를 붙여 만들어주고, public 변수는 대문자로 만들어줘.
+- [4] 열거형 타입을 정의할 때는 이름 앞에다가 E를 붙여줘. (ex. EObjectType)
+- [5] enum을 정의할 때는 클래스 밖에다 해줘.
+- [6] class 안에 class를 중첩해서 정의하지 말고, 밖에다 정의해줘.
+- [7] FindObjectOfType 대신 FindFirstObjectByType를 사용해줘.
+- [8] 클래스를 작성할 때 summary 주석을 달아서, 작업한 코드의 요구 사항을 AI가 이해할 수 있게 영어로 프롬프트를 요약해줘.
+- [9] 상속 구조를 고려해서 Awake, Start, Update 등 기본 유니티 이벤트 함수들을 가상 함수로 만들어줘.
+- [10] 유니티 오브젝트 대상으로 null propagation 문법 사용 금지.
+
+[Singleton]
+싱글톤 클래스가 공통적으로 사용할 Singleton 클래스를 만들어줘.
+공통 요구 사항을 지켜줘.
+앞으로 싱글톤 클래스는 Singleton 클래스를 상속 받아서 구현해줘.
+- [1] 싱글톤 클래스 T를 만들 때, Instance의 getter에서 혹시라도 _instance가 null이면 비활성화된 T 클래스를 FindAnyObjectByType로 찾고 활성화까지 하는 코드를 추가해줘.
+- [2] Singleton 베이스 클래스에서는 DontDestroyOnLoad은 사용하지 말아줘.
+
+[UI_Base]
+UI 클래스가 공통적으로 사용할 UI_Base 클래스를 만들어줘.
+공통 요구 사항을 지켜줘.
+앞으로 이 클래스를 상속받는 UI 클래스는 다음과 같은 규칙을 사용해.
+- [1] GameManager의 코드를 이해하고 있어야 해.
+- [2] Text는 사용하지 말고, TextMeshPro를 사용해줘.
+- [3] 다른 오브젝트의 참조는 private 변수라도 [SerializeField]를 붙여서 유니티 에디터에서 디버깅할 수 있게 해줘.
+- [4] UI_Base를 상속받은 클래스에서는 무조건 using UnityEngine; using UnityEngine.UI; using TMPro; 를 사용해.
+- [5] 다음 함수들을 구현해줘.
+-- T FindChildComponent<T>(string name) : 하위에 있는 Component를 찾는 함수야. 내부에서는 반드시 GetComponentsInChildren를 활용해줘. 찾으려는 게임 오브젝트가 비활성화 상태일 수도 있는 것을 고려해줘.
+-- GameObject FindChildGameObject(string name) : 하위에 있는 GameObject를 찾는 함수야. 내부에서는 반드시 GetComponentsInChildren를 활용해줘. 찾으려는 게임 오브젝트가 비활성화 상태일 수도 있는 것을 고려해줘.
+-- T ShowPopup<T>() : UI_Base를 상속받은 T 타입의 UI를 찾아서 활성화 하고, 반환해. FindAnyObjectByType<T>(FindObjectsInactive.Include)를 활용해줘.
+-- T ClosePopup<T>() : UI_Base를 상속받은 T 타입의 UI를 찾아서 비활성화 하고, 반환해. FindAnyObjectByType<T>(FindObjectsInactive.Include)를 활용해줘.
+- [6] 다음 가상 함수들을 구현해줘.
+-- virtual void BindUIEvents() : 유니티 에디터에서의 드래그 드롭 방식을 최소화 하고 싶어. FindChild 계열의 함수들을 활용해서 자식에 붙어 있는 참조값을 찾아줘. 버튼을 클릭했을 때 일어나는 onClick에는 RemoveAllListeners를 한 후, AddListener 바인딩을 정의해줘. Start에서 호출해줘.
+-- virtual void RefreshUI() : UI 변화가 일어나서 수치 갱신이 필요하면 이 함수를 사용해줘. Start에서 호출해줘.
+-- Awake, Start, Update 등 기본 유니티 이벤트 함수들을 가상 함수로 만들어줘.
+- [7] 유니티 오브젝트 대상으로는 coalescing assignment (??)를 사용하지 말고, 대안으로 null 체크를 해줘.
+- [8] 클래스 작성할 때 클래스 위에다 summary 주석을 달아서, 작업한 코드의 요구 사항을 AI가 이해할 수 있게 영어로 프롬프트를 요약해줘.
+
+==================================================================
+
+GameManager는 게임 상태를 관리하는 핵심 스크립트야.
+공통 요구사항을 지켜줘. Singleton을 상속 받아.
+- [1] GameManager라는 클래스를 싱글톤으로 만들어서 게임 상태와 관련된 데이터를 관리해줘.
+- [2] 앞으로 다른 코드에서 GameManager 수치들을 읽거나 쓰려면, GameManager 싱글톤 클래스를 활용해줘.
+- [3] 다른 클래스에서도 GameManager의 데이터를 사용할 수 있게 모든 변수들을 대상으로 getter, setter를 준비하고 public으로 열어줘.
+- [4] List, Dictionary로 데이터를 관리하는 경우, 모든 데이터를 그대로 질의할 수 있는 GetAll 함수를 만들어줘.
+- [5] GameManager 수치들이 변하면, 관련이 있는 UI들은 업데이트를 해야 해. event Action 타입을 활용해 옵저버 패턴으로 만들고 모든 변수의 setter에 OnChanged를 Invoke하는 코드를 추가해줘. 변수마다 별도의 event를 사용해줘. Action은 인자 없는 기본 타입으로 해줘.
+- [6] GameManager의 데이터들은 private 변수라도 [SerializeField]를 붙여줘.
+- [7] GameManager에 주석을 달아서, GameManager를 사용하는 다른 AI가 요구 사항을 이해할 수 있게 위 프롬프트를 요약해줘.
+- [8] class 위에 전체 summary 주석을 달아서, 작업한 코드의 요구 사항을 AI가 이해할 수 있게 영어로 프롬프트를 요약해줘.
+
+GameManager에 붙일 스크립트를 만들어줘.
+- Gold : 현재 소지하고 있는 골드. 정수 타입.
+- GoldPerClick : 클릭당 늘어나는 골드야. 이후에는 GPC라고 부를게. 정수 타입.
+- GoldPerSecond : 1초당 자동적으로 늘어나는 골드야. 이후에는 GPS라고 부를게. 정수 타입.
+- Stage : 현재 진행중인 스테이지 레벨이야. 정수 타입. 초기값은 1.
+- EGPCUpgradeType : 열거형이고 A, B, C, D, E를 포함해
+- EGPSUpgradeType : 열거형이고 A, B, C, D, E를 포함해.
+- EProcessUpgradeType : 열거형이고 A, B, C, D, E를 포함해
+- GPCUpgrades : EGPCUpgradeType 값에 대해, 각각 레벨이 있어. 초기값은 1레벨이야.
+- GPSUpgrades : EGPSUpgradeType 값에 대해, 각각 레벨이 있어. 초기값은 1레벨이야.
+- ProcessUpgrades : EProcessUpgradeType 값에 대해, 각각 레벨이 있어. 초기값은 1레벨이야.
+
+==================================================================
+
+UI_ClickerGame에 붙일 스크립트를 만들어줘.
+공통 요구사항을 지켜줘. UI_Base를 상속 받아. GameManager의 코드를 이해하고 있어야 해.
+- GPCButton을 누르면 GPCTab이 활성화 돼.
+- GPSButton을 누르면 GPSTab이 활성화 돼.
+- ProcessButton을 누르면 ProcessTab활성화 돼.
+- ShopButton을 누르면 ShopTab이 활성화 돼.
+- GameArea를 클릭하면, GPC만큼 Gold가 오르는 기능을 만들어줘.
+- GPS에 따라 매 초 골드가 오르는 기능을 만들어줘.
+- StageText는 Stage 수치와 연동되어야 해.
+- GoldPerClickText는 GPC와 수치와 연동되어야 해.
+- GoldPerSecText는 GPS 수치와 연동되어야 해.
+- GoldText는 Gold와 수치와 연동되어야 해.
+
+==================================================================
+
+UI_GPCItem에 붙일 스크립트를 만들어줘.
+공통 요구사항을 지켜줘. UI_Base를 상속 받아. GameManager의 코드를 이해하고 있어야 해.
+- GPCUpgrade 타입을 유니티 에디터에서 지정할 수 있어.
+- ClickButton을 누르면 GPC가 올라.
+-- GPCUpgradeType이 A라면, GPC 증가 = GPCUpgrade 레벨 * 10.
+-- GPCUpgradeType이 B라면, GPC 증가 = GPCUpgrade 레벨 * 20.
+-- GPCUpgradeType이 C라면, GPC 증가 = GPCUpgrade 레벨 * 30.
+-- GPCUpgradeType이 D라면, GPC 증가 = GPCUpgrade 레벨 * 40.
+-- GPCUpgradeType이 E라면, GPC 증가 = GPCUpgrade 레벨 * 50.
+
+==================================================================
+
+UI_GPSItem에 붙일 스크립트를 만들어줘.
+공통 요구사항을 지켜줘. UI_Base를 상속 받아. GameManager의 코드를 이해하고 있어야 해.
+- GPSUpgrade 타입을 유니티 에디터에서 지정할 수 있어.
+- ClickButton을 누르면 GPS가 올라.
+-- GPSUpgradeType이 A라면, GPS 증가 = GPSUpgrade 레벨 * 10.
+-- GPSUpgradeType이 B라면, GPS 증가 = GPSUpgrade 레벨 * 20.
+-- GPSUpgradeType이 C라면, GPS 증가 = GPSUpgrade 레벨 * 30.
+-- GPSUpgradeType이 D라면, GPS 증가 = GPSUpgrade 레벨 * 40.
+-- GPSUpgradeType이 E라면, GPS 증가 = GPSUpgrade 레벨 * 50.
+
+==================================================================
+
+UI_ConfirmPopup에 붙일 스크립트를 만들어줘.
+공통 요구사항을 지켜줘. UI_Base를 상속 받아. GameManager의 코드를 이해하고 있어야 해.
+- 처음에는 비활성화 상태로 시작해.
+- 이 클래스를 활용하는 다른 클래스는 콜백 함수 설정할 수 있어.
+- 원하는 메시지를 띄우고, CloseButton을 클릭하면 창이 닫히면서 연결된 콜백 함수를 호출해.
+- 다음 함수 형태로 구현해줘:
+-- void Show(string message, System.Action onCloseCallback)
+-- void ClosePopup()
+
+==================================================================
+
+UI_ProcessItem에 붙일 스크립트를 만들어줘. 
+공통 요구사항을 지켜줘. UI_Base를 상속 받아. GameManager의 코드를 이해하고 있어야 해.
+- ProcessUpgrade 타입을 유니티 에디터에서 지정할 수 있어.
+- ClickButton을 누르면 UI_ConfirmPopup 팝업이 뜨고, 팝업창을 닫으면 Stage가 1 올라.
+- UI_ConfirmPopup은 차일드 오브젝트가 아닌 것에 유의해.
+
+==================================================================
+
+SaveManager에 붙일 스크립트를 만들어줘.
+공통 요구사항을 지켜줘. Singleton을 상속 받아.
+- GameManager에서 들고 있는 데이터를 SaveInterval 초(초기값 = 10)마다 세이브 파일로 만들어서 저장해줘. Json 직렬화 방식을 사용해줘.
+- 로딩하는 함수를 만들어서, 처음 게임이 시작될 때 Start에서 데이터를 로딩해서 상태를 복원할 수 있게 만들어줘.
+-- 세이브 파일을 로드했는데 List나 Dictionary가 null이라면, 기본 상태의 컬렉션으로 만들어주고 InitializeGameData()를 호출해.
+- 유니티 에디터의 Tools 메뉴에 세이브 파일을 날리는 에디터 기능을 만들어줘. 이 기능은 반드시 유니티 에디터에서만 동작하게 매크로를 걸어줘.
+
+==================================================================
+
+스토리 진행과 관련된 코드를 만들어줘.
+- Gold, Stage 조건에 따라 대화 이벤트가 발동해.
+- 대화 이벤트에는 여러 개의 텍스트가 있고, 버튼을 통해 하나 씩 넘기면서 볼 수 있어.
+- 모든 텍스트를 보면 그 대화 이벤트가 끝나.
+
+DialogueEvent를 정의해줘.
+유니티 에디터에서 설정하게 해줘. MonoBehavior 붙이지 마. ScriptableObject로는 만들지 말아줘.
+모든 변수를 public으로 만들어줘.
+- EventId : 구분하기 위한 이벤트 번호.
+- Condition : Gold, Stage 발동 조건이 있어.
+- DialogueTexts : 보여줘야 하는 텍스트 목록이 있어.
+- IsConditionMet : 모든 조건을 만족하는지 판별하는 함수야
+
+StoryManager에 붙일 스크립트를 만들어줘.
+Singleton을 상속 받아. GameManager 코드를 이해하고 있어야 해.
+- GameManager.Instance의 구독자 패턴을 활용해서, DialogueEvent의 조건 확인하는 코드를 넣어줘.
+- 이벤트 조건을 만족하면, UI_Dialogue를 활성화 해서 화면이 표시해.
+- 한 번 발동한 이벤트는 두 번 다시 발동하지 않아.
+- 유니티 에디터에서 DialogueEvent들을 직접 설정해줄 예정이야.
+
+UI_Dialogue에 붙일 스크립트를 만들어줘.
+UI_Base를 상속 받아. StoryManager와 GameManager의 코드를 이해하고 있어야 해.
+- DialogueEvent : 화면에 표시해야 하는 대화 이벤트야.
+- DialogueText : DialogueEvent에 있는 텍스트를 하나씩 하나씩 여기에 표시해.
+- NextButton : 이 버튼을 누르면 다음 텍스트를 볼 수 있어.
+- 처음엔 비활성화 상태였다가, 모든 이벤트의 대화를 다 봤으면 다시 비활성화 상태로 바꿔줘.
+
+==================================================================
