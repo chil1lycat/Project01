@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 6a804322e9cec2a47a95c6801b5ed269
+guid: 1501c73ee19df9144b9717a1a9e015df
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -9,7 +9,7 @@ TrueTypeFontImporter:
   characterPadding: 1
   includeFontData: 1
   fontNames:
-  - NanumGothic
+  - Maplestory
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0

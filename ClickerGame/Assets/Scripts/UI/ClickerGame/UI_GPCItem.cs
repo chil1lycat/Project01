@@ -64,20 +64,35 @@ public class UI_GPCItem : UI_Base
 
         switch (_gpcUpgradeType)
         {
-            case EGPCUpgradeType.A:
+            case EGPCUpgradeType.Tier1:
                 increaseAmount = _upgradeLevel * 10;
                 break;
-            case EGPCUpgradeType.B:
+            case EGPCUpgradeType.Tier2:
                 increaseAmount = _upgradeLevel * 20;
                 break;
-            case EGPCUpgradeType.C:
+            case EGPCUpgradeType.Tier3:
                 increaseAmount = _upgradeLevel * 30;
                 break;
-            case EGPCUpgradeType.D:
+            case EGPCUpgradeType.Tier4:
                 increaseAmount = _upgradeLevel * 40;
                 break;
-            case EGPCUpgradeType.E:
+            case EGPCUpgradeType.Tier5:
                 increaseAmount = _upgradeLevel * 50;
+                break;
+            case EGPCUpgradeType.Tier6:
+                increaseAmount = _upgradeLevel * 60;
+                break;
+            case EGPCUpgradeType.Tier7:
+                increaseAmount = _upgradeLevel * 70;
+                break;
+            case EGPCUpgradeType.Tier8:
+                increaseAmount = _upgradeLevel * 80;
+                break;
+            case EGPCUpgradeType.Tier9:
+                increaseAmount = _upgradeLevel * 90;
+                break;
+            case EGPCUpgradeType.Tier10:
+                increaseAmount = _upgradeLevel * 100;
                 break;
         }
 

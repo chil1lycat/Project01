@@ -11,9 +11,9 @@ using System.Collections.Generic;
 /// using event Actions to notify UI updates, and manages data using Lists and Dictionaries.
 /// </summary>
 
-public enum EGPCUpgradeType { A, B, C, D, E }
-public enum EGPSUpgradeType { A, B, C, D, E }
-public enum EProcessUpgradeType { A, B, C, D, E }
+public enum EGPCUpgradeType { Tier1, Tier2, Tier3, Tier4, Tier5, Tier6, Tier7, Tier8, Tier9, Tier10 }
+public enum EGPSUpgradeType { Tier1, Tier2, Tier3, Tier4, Tier5, Tier6, Tier7, Tier8, Tier9, Tier10 }
+public enum EProcessUpgradeType { Tier1, Tier2, Tier3, Tier4, Tier5, Tier6, Tier7, Tier8, Tier9, Tier10 }
 
 public class GameManager : Singleton<GameManager>
 {
@@ -95,34 +95,69 @@ public class GameManager : Singleton<GameManager>
     }
     public event Action OnReviveCountChanged;
 
+    // Language-related variable
+    [SerializeField] private ELanguage _currentLanguage = ELanguage.Korean;
+    public ELanguage CurrentLanguage
+    {
+        get => _currentLanguage;
+        set
+        {
+            if (_currentLanguage != value)
+            {
+                _currentLanguage = value;
+                if (LocalizationManager.Instance != null)
+                {
+                    LocalizationManager.Instance.CurrentLanguage = value;
+                }
+                OnLanguageChanged?.Invoke();
+            }
+        }
+    }
+    public event Action OnLanguageChanged;
+
     // Upgrade-related variables
     [SerializeField] private Dictionary<EGPCUpgradeType, int> _gpcUpgrades = new Dictionary<EGPCUpgradeType, int>
     {
-        { EGPCUpgradeType.A, 1 },
-        { EGPCUpgradeType.B, 1 },
-        { EGPCUpgradeType.C, 1 },
-        { EGPCUpgradeType.D, 1 },
-        { EGPCUpgradeType.E, 1 }
+        { EGPCUpgradeType.Tier1, 1 },
+        { EGPCUpgradeType.Tier2, 1 },
+        { EGPCUpgradeType.Tier3, 1 },
+        { EGPCUpgradeType.Tier4, 1 },
+        { EGPCUpgradeType.Tier5, 1 },
+        { EGPCUpgradeType.Tier6, 1 },
+        { EGPCUpgradeType.Tier7, 1 },
+        { EGPCUpgradeType.Tier8, 1 },
+        { EGPCUpgradeType.Tier9, 1 },
+        { EGPCUpgradeType.Tier10, 1 }
     };
     public Dictionary<EGPCUpgradeType, int> GPCUpgrades => _gpcUpgrades;
 
     [SerializeField] private Dictionary<EGPSUpgradeType, int> _gpsUpgrades = new Dictionary<EGPSUpgradeType, int>
     {
-        { EGPSUpgradeType.A, 1 },
-        { EGPSUpgradeType.B, 1 },
-        { EGPSUpgradeType.C, 1 },
-        { EGPSUpgradeType.D, 1 },
-        { EGPSUpgradeType.E, 1 }
+        { EGPSUpgradeType.Tier1, 1 },
+        { EGPSUpgradeType.Tier2, 1 },
+        { EGPSUpgradeType.Tier3, 1 },
+        { EGPSUpgradeType.Tier4, 1 },
+        { EGPSUpgradeType.Tier5, 1 },
+        { EGPSUpgradeType.Tier6, 1 },
+        { EGPSUpgradeType.Tier7, 1 },
+        { EGPSUpgradeType.Tier8, 1 },
+        { EGPSUpgradeType.Tier9, 1 },
+        { EGPSUpgradeType.Tier10, 1 }
     };
     public Dictionary<EGPSUpgradeType, int> GPSUpgrades => _gpsUpgrades;
 
     [SerializeField] private Dictionary<EProcessUpgradeType, int> _processUpgrades = new Dictionary<EProcessUpgradeType, int>
     {
-        { EProcessUpgradeType.A, 1 },
-        { EProcessUpgradeType.B, 1 },
-        { EProcessUpgradeType.C, 1 },
-        { EProcessUpgradeType.D, 1 },
-        { EProcessUpgradeType.E, 1 }
+        { EProcessUpgradeType.Tier1, 1 },
+        { EProcessUpgradeType.Tier2, 1 },
+        { EProcessUpgradeType.Tier3, 1 },
+        { EProcessUpgradeType.Tier4, 1 },
+        { EProcessUpgradeType.Tier5, 1 },
+        { EProcessUpgradeType.Tier6, 1 },
+        { EProcessUpgradeType.Tier7, 1 },
+        { EProcessUpgradeType.Tier8, 1 },
+        { EProcessUpgradeType.Tier9, 1 },
+        { EProcessUpgradeType.Tier10, 1 }
     };
     public Dictionary<EProcessUpgradeType, int> ProcessUpgrades => _processUpgrades;
 
@@ -155,11 +190,16 @@ public class GameManager : Singleton<GameManager>
         {
             _gpcUpgrades = new Dictionary<EGPCUpgradeType, int>
             {
-                { EGPCUpgradeType.A, 1 },
-                { EGPCUpgradeType.B, 1 },
-                { EGPCUpgradeType.C, 1 },
-                { EGPCUpgradeType.D, 1 },
-                { EGPCUpgradeType.E, 1 }
+                { EGPCUpgradeType.Tier1, 1 },
+                { EGPCUpgradeType.Tier2, 1 },
+                { EGPCUpgradeType.Tier3, 1 },
+                { EGPCUpgradeType.Tier4, 1 },
+                { EGPCUpgradeType.Tier5, 1 },
+                { EGPCUpgradeType.Tier6, 1 },
+                { EGPCUpgradeType.Tier7, 1 },
+                { EGPCUpgradeType.Tier8, 1 },
+                { EGPCUpgradeType.Tier9, 1 },
+                { EGPCUpgradeType.Tier10, 1 }
             };
         }
 
@@ -167,11 +207,16 @@ public class GameManager : Singleton<GameManager>
         {
             _gpsUpgrades = new Dictionary<EGPSUpgradeType, int>
             {
-                { EGPSUpgradeType.A, 1 },
-                { EGPSUpgradeType.B, 1 },
-                { EGPSUpgradeType.C, 1 },
-                { EGPSUpgradeType.D, 1 },
-                { EGPSUpgradeType.E, 1 }
+                { EGPSUpgradeType.Tier1, 1 },
+                { EGPSUpgradeType.Tier2, 1 },
+                { EGPSUpgradeType.Tier3, 1 },
+                { EGPSUpgradeType.Tier4, 1 },
+                { EGPSUpgradeType.Tier5, 1 },
+                { EGPSUpgradeType.Tier6, 1 },
+                { EGPSUpgradeType.Tier7, 1 },
+                { EGPSUpgradeType.Tier8, 1 },
+                { EGPSUpgradeType.Tier9, 1 },
+                { EGPSUpgradeType.Tier10, 1 }
             };
         }
 
@@ -179,11 +224,16 @@ public class GameManager : Singleton<GameManager>
         {
             _processUpgrades = new Dictionary<EProcessUpgradeType, int>
             {
-                { EProcessUpgradeType.A, 1 },
-                { EProcessUpgradeType.B, 1 },
-                { EProcessUpgradeType.C, 1 },
-                { EProcessUpgradeType.D, 1 },
-                { EProcessUpgradeType.E, 1 }
+                { EProcessUpgradeType.Tier1, 1 },
+                { EProcessUpgradeType.Tier2, 1 },
+                { EProcessUpgradeType.Tier3, 1 },
+                { EProcessUpgradeType.Tier4, 1 },
+                { EProcessUpgradeType.Tier5, 1 },
+                { EProcessUpgradeType.Tier6, 1 },
+                { EProcessUpgradeType.Tier7, 1 },
+                { EProcessUpgradeType.Tier8, 1 },
+                { EProcessUpgradeType.Tier9, 1 },
+                { EProcessUpgradeType.Tier10, 1 }
             };
         }
 
@@ -210,29 +260,44 @@ public class GameManager : Singleton<GameManager>
         // Reset upgrades to default levels (1)
         _gpcUpgrades = new Dictionary<EGPCUpgradeType, int>
         {
-            { EGPCUpgradeType.A, 1 },
-            { EGPCUpgradeType.B, 1 },
-            { EGPCUpgradeType.C, 1 },
-            { EGPCUpgradeType.D, 1 },
-            { EGPCUpgradeType.E, 1 }
+            { EGPCUpgradeType.Tier1, 1 },
+            { EGPCUpgradeType.Tier2, 1 },
+            { EGPCUpgradeType.Tier3, 1 },
+            { EGPCUpgradeType.Tier4, 1 },
+            { EGPCUpgradeType.Tier5, 1 },
+            { EGPCUpgradeType.Tier6, 1 },
+            { EGPCUpgradeType.Tier7, 1 },
+            { EGPCUpgradeType.Tier8, 1 },
+            { EGPCUpgradeType.Tier9, 1 },
+            { EGPCUpgradeType.Tier10, 1 }
         };
 
         _gpsUpgrades = new Dictionary<EGPSUpgradeType, int>
         {
-            { EGPSUpgradeType.A, 1 },
-            { EGPSUpgradeType.B, 1 },
-            { EGPSUpgradeType.C, 1 },
-            { EGPSUpgradeType.D, 1 },
-            { EGPSUpgradeType.E, 1 }
+            { EGPSUpgradeType.Tier1, 1 },
+            { EGPSUpgradeType.Tier2, 1 },
+            { EGPSUpgradeType.Tier3, 1 },
+            { EGPSUpgradeType.Tier4, 1 },
+            { EGPSUpgradeType.Tier5, 1 },
+            { EGPSUpgradeType.Tier6, 1 },
+            { EGPSUpgradeType.Tier7, 1 },
+            { EGPSUpgradeType.Tier8, 1 },
+            { EGPSUpgradeType.Tier9, 1 },
+            { EGPSUpgradeType.Tier10, 1 }
         };
 
         _processUpgrades = new Dictionary<EProcessUpgradeType, int>
         {
-            { EProcessUpgradeType.A, 1 },
-            { EProcessUpgradeType.B, 1 },
-            { EProcessUpgradeType.C, 1 },
-            { EProcessUpgradeType.D, 1 },
-            { EProcessUpgradeType.E, 1 }
+            { EProcessUpgradeType.Tier1, 1 },
+            { EProcessUpgradeType.Tier2, 1 },
+            { EProcessUpgradeType.Tier3, 1 },
+            { EProcessUpgradeType.Tier4, 1 },
+            { EProcessUpgradeType.Tier5, 1 },
+            { EProcessUpgradeType.Tier6, 1 },
+            { EProcessUpgradeType.Tier7, 1 },
+            { EProcessUpgradeType.Tier8, 1 },
+            { EProcessUpgradeType.Tier9, 1 },
+            { EProcessUpgradeType.Tier10, 1 }
         };
 
         // Fire upgrade-change events indirectly by invoking the primary events

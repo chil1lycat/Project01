@@ -55,6 +55,9 @@ public class SaveManager : Singleton<SaveManager>
 
         // Added: store StoryManager triggered event IDs
         public List<int> TriggeredEventIds;
+
+        // Added: store current language
+        public ELanguage CurrentLanguage;
     }
 
     public void Save()
@@ -77,7 +80,10 @@ public class SaveManager : Singleton<SaveManager>
             ProcessUpgrades = new Dictionary<EProcessUpgradeType, int>(GameManager.Instance.ProcessUpgrades),
 
             // Save StoryManager triggered events if available
-            TriggeredEventIds = StoryManager.Instance != null ? StoryManager.Instance.GetTriggeredEventIds() : new List<int>()
+            TriggeredEventIds = StoryManager.Instance != null ? StoryManager.Instance.GetTriggeredEventIds() : new List<int>(),
+
+            // Save current language
+            CurrentLanguage = GameManager.Instance.CurrentLanguage
         };
 
         try
@@ -175,6 +181,9 @@ public class SaveManager : Singleton<SaveManager>
                 GameManager.Instance.ProcessUpgrades.Clear();
                 foreach (var kv in data.ProcessUpgrades) GameManager.Instance.ProcessUpgrades[kv.Key] = kv.Value;
             }
+
+            // Load language setting
+            GameManager.Instance.CurrentLanguage = data.CurrentLanguage;
 
             GameManager.Instance.InitializeGameData();
 

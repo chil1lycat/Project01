@@ -64,20 +64,35 @@ public class UI_GPSItem : UI_Base
 
         switch (_gpsUpgradeType)
         {
-            case EGPSUpgradeType.A:
+            case EGPSUpgradeType.Tier1:
                 increaseAmount = _upgradeLevel * 10;
                 break;
-            case EGPSUpgradeType.B:
+            case EGPSUpgradeType.Tier2:
                 increaseAmount = _upgradeLevel * 20;
                 break;
-            case EGPSUpgradeType.C:
+            case EGPSUpgradeType.Tier3:
                 increaseAmount = _upgradeLevel * 30;
                 break;
-            case EGPSUpgradeType.D:
+            case EGPSUpgradeType.Tier4:
                 increaseAmount = _upgradeLevel * 40;
                 break;
-            case EGPSUpgradeType.E:
+            case EGPSUpgradeType.Tier5:
                 increaseAmount = _upgradeLevel * 50;
+                break;
+            case EGPSUpgradeType.Tier6:
+                increaseAmount = _upgradeLevel * 60;
+                break;
+            case EGPSUpgradeType.Tier7:
+                increaseAmount = _upgradeLevel * 70;
+                break;
+            case EGPSUpgradeType.Tier8:
+                increaseAmount = _upgradeLevel * 80;
+                break;
+            case EGPSUpgradeType.Tier9:
+                increaseAmount = _upgradeLevel * 90;
+                break;
+            case EGPSUpgradeType.Tier10:
+                increaseAmount = _upgradeLevel * 100;
                 break;
         }
 

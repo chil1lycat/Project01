@@ -63,9 +63,9 @@ GameManager에 붙일 스크립트를 만들어줘.
 - GoldPerClick : 클릭당 늘어나는 골드야. 이후에는 GPC라고 부를게. 정수 타입.
 - GoldPerSecond : 1초당 자동적으로 늘어나는 골드야. 이후에는 GPS라고 부를게. 정수 타입.
 - Stage : 현재 진행중인 스테이지 레벨이야. 정수 타입. 초기값은 1.
-- EGPCUpgradeType : 열거형이고 A, B, C, D, E를 포함해
-- EGPSUpgradeType : 열거형이고 A, B, C, D, E를 포함해.
-- EProcessUpgradeType : 열거형이고 A, B, C, D, E를 포함해
+- EGPCUpgradeType : 열거형이고 Tier1, Tier2, Tier3, Tier4, Tier5, Tier6, Tier7, Tier8, Tier9, Tier10을 포함해
+- EGPSUpgradeType : 열거형이고 Tier1, Tier2, Tier3, Tier4, Tier5, Tier6, Tier7, Tier8, Tier9, Tier10을 포함해.
+- EProcessUpgradeType : 열거형이고 Tier1, Tier2, Tier3, Tier4, Tier5, Tier6, Tier7, Tier8, Tier9, Tier10을 포함해
 - GPCUpgrades : EGPCUpgradeType 값에 대해, 각각 레벨이 있어. 초기값은 1레벨이야.
 - GPSUpgrades : EGPSUpgradeType 값에 대해, 각각 레벨이 있어. 초기값은 1레벨이야.
 - ProcessUpgrades : EProcessUpgradeType 값에 대해, 각각 레벨이 있어. 초기값은 1레벨이야.
@@ -95,11 +95,16 @@ UI_GPCItem에 붙일 스크립트를 만들어줘.
 공통 요구사항을 지켜줘. UI_Base를 상속 받아. GameManager의 코드를 이해하고 있어야 해.
 - GPCUpgrade 타입을 유니티 에디터에서 지정할 수 있어.
 - ClickButton을 누르면 GPC가 올라.
--- GPCUpgradeType이 A라면, GPC 증가 = GPCUpgrade 레벨 * 10.
--- GPCUpgradeType이 B라면, GPC 증가 = GPCUpgrade 레벨 * 20.
--- GPCUpgradeType이 C라면, GPC 증가 = GPCUpgrade 레벨 * 30.
--- GPCUpgradeType이 D라면, GPC 증가 = GPCUpgrade 레벨 * 40.
--- GPCUpgradeType이 E라면, GPC 증가 = GPCUpgrade 레벨 * 50.
+-- GPCUpgradeType이 Tier1이라면, GPC 증가 = GPCUpgrade 레벨 * 10.
+-- GPCUpgradeType이 Tier2이라면, GPC 증가 = GPCUpgrade 레벨 * 20.
+-- GPCUpgradeType이 Tier3이라면, GPC 증가 = GPCUpgrade 레벨 * 30.
+-- GPCUpgradeType이 Tier4이라면, GPC 증가 = GPCUpgrade 레벨 * 40.
+-- GPCUpgradeType이 Tier5이라면, GPC 증가 = GPCUpgrade 레벨 * 50.
+-- GPCUpgradeType이 Tier6이라면, GPC 증가 = GPCUpgrade 레벨 * 60.
+-- GPCUpgradeType이 Tier7이라면, GPC 증가 = GPCUpgrade 레벨 * 70.
+-- GPCUpgradeType이 Tier8이라면, GPC 증가 = GPCUpgrade 레벨 * 80.
+-- GPCUpgradeType이 Tier9이라면, GPC 증가 = GPCUpgrade 레벨 * 90.
+-- GPCUpgradeType이 Tier10이라면, GPC 증가 = GPCUpgrade 레벨 * 100.
 
 ==================================================================
 
@@ -109,11 +114,16 @@ UI_GPSItem에 붙일 스크립트를 만들어줘.
 공통 요구사항을 지켜줘. UI_Base를 상속 받아. GameManager의 코드를 이해하고 있어야 해.
 - GPSUpgrade 타입을 유니티 에디터에서 지정할 수 있어.
 - ClickButton을 누르면 GPS가 올라.
--- GPSUpgradeType이 A라면, GPS 증가 = GPSUpgrade 레벨 * 10.
--- GPSUpgradeType이 B라면, GPS 증가 = GPSUpgrade 레벨 * 20.
--- GPSUpgradeType이 C라면, GPS 증가 = GPSUpgrade 레벨 * 30.
--- GPSUpgradeType이 D라면, GPS 증가 = GPSUpgrade 레벨 * 40.
--- GPSUpgradeType이 E라면, GPS 증가 = GPSUpgrade 레벨 * 50.
+-- GPSUpgradeType이 Tier1이라면, GPS 증가 = GPSUpgrade 레벨 * 10.
+-- GPSUpgradeType이 Tier2이라면, GPS 증가 = GPSUpgrade 레벨 * 20.
+-- GPSUpgradeType이 Tier3이라면, GPS 증가 = GPSUpgrade 레벨 * 30.
+-- GPSUpgradeType이 Tier4이라면, GPS 증가 = GPSUpgrade 레벨 * 40.
+-- GPSUpgradeType이 Tier5이라면, GPS 증가 = GPSUpgrade 레벨 * 50.
+-- GPSUpgradeType이 Tier6이라면, GPS 증가 = GPSUpgrade 레벨 * 60.
+-- GPSUpgradeType이 Tier7이라면, GPS 증가 = GPSUpgrade 레벨 * 70.
+-- GPSUpgradeType이 Tier8이라면, GPS 증가 = GPSUpgrade 레벨 * 80.
+-- GPSUpgradeType이 Tier9이라면, GPS 증가 = GPSUpgrade 레벨 * 90.
+-- GPSUpgradeType이 Tier10이라면, GPS 증가 = GPSUpgrade 레벨 * 100.
 
 ==================================================================
 
@@ -148,6 +158,38 @@ SaveManager에 붙일 스크립트를 만들어줘.
 - 로딩하는 함수를 만들어서, 처음 게임이 시작될 때 Start에서 데이터를 로딩해서 상태를 복원할 수 있게 만들어줘.
 -- 세이브 파일을 로드했는데 List나 Dictionary가 null이라면, 기본 상태의 컬렉션으로 만들어주고 InitializeGameData()를 호출해.
 - 유니티 에디터의 Tools 메뉴에 세이브 파일을 날리는 에디터 기능을 만들어줘. 이 기능은 반드시 유니티 에디터에서만 동작하게 매크로를 걸어줘.
+
+==================================================================
+
+[LocalizationManager]
+
+LocalizationManager에 붙일 스크립트를 만들어줘.
+공통 요구사항을 지켜줘. Singleton을 상속 받아.
+- CSV 파일을 통해 다국어 텍스트를 관리해.
+- CSV 파일은 Resources/Localization/LocalizationData.csv 경로에 위치해.
+- CSV 형식: Key,Korean,English,Japanese (첫 줄은 헤더)
+- ELanguage 열거형을 정의해: Korean, English, Japanese
+- CurrentLanguage 프로퍼티로 현재 언어를 관리하고, 변경 시 OnLanguageChanged 이벤트를 발동해.
+- GetText(string key) 함수로 현재 언어에 맞는 텍스트를 반환해.
+- GetText(string key, ELanguage language) 함수로 특정 언어의 텍스트를 반환해.
+- Key를 찾지 못하면 Key 자체를 반환하고 경고 로그를 출력해.
+
+LocalizedText 컴포넌트를 만들어줘.
+- TMP_Text 컴포넌트가 필수야. RequireComponent를 사용해.
+- LocalizationKey를 유니티 에디터에서 설정할 수 있어.
+- Start에서 LocalizationManager의 OnLanguageChanged 이벤트를 구독해.
+- 언어가 변경되면 자동으로 텍스트를 업데이트해.
+- OnDestroy에서 이벤트 구독을 해제해.
+
+GameManager에 다음을 추가해줘.
+- CurrentLanguage : 현재 선택된 언어. ELanguage 타입. 초기값은 Korean.
+- CurrentLanguage가 변경되면 LocalizationManager의 CurrentLanguage도 함께 변경해.
+- OnLanguageChanged 이벤트를 추가해.
+
+SaveManager에 다음을 추가해줘.
+- SaveData 클래스에 CurrentLanguage 필드를 추가해.
+- Save 함수에서 GameManager.CurrentLanguage를 저장해.
+- Load 함수에서 CurrentLanguage를 복원해.
 
 ==================================================================
 

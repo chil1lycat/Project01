@@ -1,0 +1,11 @@
+Key,Korean,English,Japanese
+ui_gold,골드,Gold,ゴールド
+ui_stage,스테이지,Stage,ステージ
+ui_gpc,클릭당 골드,Gold Per Click,クリックごとのゴールド
+ui_gps,초당 골드,Gold Per Second,秒ごとのゴールド
+ui_click,클릭,Click,クリック
+ui_upgrade,업그레이드,Upgrade,アップグレード
+ui_process,진행,Process,進行
+ui_shop,상점,Shop,ショップ
+dialogue_event1_text1,와! 100 골드!,Wow!! 100 Gold!,わあ！100ゴールド！
+dialogue_event1_text2,축하합니다!,Congratulations!!,おめでとうございます！
