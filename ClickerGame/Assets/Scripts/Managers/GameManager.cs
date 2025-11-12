@@ -2,7 +2,6 @@
 // This was created with the help of Assistant, a Unity Artificial Intelligence product.
 
 using System;
-using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
 /// <summary>
@@ -17,14 +16,14 @@ public enum EProcessUpgradeType { Tier1, Tier2, Tier3, Tier4, Tier5, Tier6, Tier
 
 public class GameManager : Singleton<GameManager>
 {
-    // Gold-related variables
-    [SerializeField] private int _gold;
-    public int Gold
+    // Gold-related variables (double로 변경하여 큰 숫자 지원)
+    [SerializeField] private double _gold;
+    public double Gold
     {
         get => _gold;
         set
         {
-            if (_gold != value)
+            if (System.Math.Abs(_gold - value) > 0.001)
             {
                 _gold = value;
                 OnGoldChanged?.Invoke();
@@ -33,13 +32,13 @@ public class GameManager : Singleton<GameManager>
     }
     public event Action OnGoldChanged;
 
-    [SerializeField] private int _goldPerClick;
-    public int GoldPerClick
+    [SerializeField] private double _goldPerClick;
+    public double GoldPerClick
     {
         get => _goldPerClick;
         set
         {
-            if (_goldPerClick != value)
+            if (System.Math.Abs(_goldPerClick - value) > 0.001)
             {
                 _goldPerClick = value;
                 OnGoldPerClickChanged?.Invoke();
@@ -48,13 +47,13 @@ public class GameManager : Singleton<GameManager>
     }
     public event Action OnGoldPerClickChanged;
 
-    [SerializeField] private int _goldPerSecond;
-    public int GoldPerSecond
+    [SerializeField] private double _goldPerSecond;
+    public double GoldPerSecond
     {
         get => _goldPerSecond;
         set
         {
-            if (_goldPerSecond != value)
+            if (System.Math.Abs(_goldPerSecond - value) > 0.001)
             {
                 _goldPerSecond = value;
                 OnGoldPerSecondChanged?.Invoke();
@@ -299,6 +298,12 @@ public class GameManager : Singleton<GameManager>
             { EProcessUpgradeType.Tier9, 1 },
             { EProcessUpgradeType.Tier10, 1 }
         };
+
+        // Reset GPCItemData levels
+        if (GPCItemDataManager.Instance != null)
+        {
+            GPCItemDataManager.Instance.ResetAllLevels();
+        }
 
         // Fire upgrade-change events indirectly by invoking the primary events
         OnGoldChanged?.Invoke();

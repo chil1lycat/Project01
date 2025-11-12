@@ -4,7 +4,6 @@
 using System;
 using System.IO;
 using System.Text;
-using UnityEditor;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -44,9 +43,9 @@ public class SaveManager : Singleton<SaveManager>
     [Serializable]
     private class SaveData
     {
-        public int Gold;
-        public int GoldPerClick;
-        public int GoldPerSecond;
+        public double Gold;
+        public double GoldPerClick;
+        public double GoldPerSecond;
         public int Stage;
         public int ReviveCount;
         public Dictionary<EGPCUpgradeType, int> GPCUpgrades;
@@ -58,6 +57,9 @@ public class SaveManager : Singleton<SaveManager>
 
         // Added: store current language
         public ELanguage CurrentLanguage;
+
+        // Added: store GPCItemData levels
+        public Dictionary<string, int> ItemDataLevels;
     }
 
     public void Save()
@@ -83,7 +85,10 @@ public class SaveManager : Singleton<SaveManager>
             TriggeredEventIds = StoryManager.Instance != null ? StoryManager.Instance.GetTriggeredEventIds() : new List<int>(),
 
             // Save current language
-            CurrentLanguage = GameManager.Instance.CurrentLanguage
+            CurrentLanguage = GameManager.Instance.CurrentLanguage,
+
+            // Save GPCItemData levels if available
+            ItemDataLevels = GPCItemDataManager.Instance != null ? GPCItemDataManager.Instance.GetAllLevels() : new Dictionary<string, int>()
         };
 
         try
@@ -184,6 +189,12 @@ public class SaveManager : Singleton<SaveManager>
 
             // Load language setting
             GameManager.Instance.CurrentLanguage = data.CurrentLanguage;
+
+            // Load GPCItemData levels if available
+            if (data.ItemDataLevels != null && GPCItemDataManager.Instance != null)
+            {
+                GPCItemDataManager.Instance.LoadAllLevels(data.ItemDataLevels);
+            }
 
             GameManager.Instance.InitializeGameData();
 

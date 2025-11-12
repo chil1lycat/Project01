@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 374d127e8f2414341ae6be49d19d1e3d, type: 3}
+  m_Name: UI_GPC_T09
+  m_EditorClassIdentifier: Assembly-CSharp::GPCItemData
+  itemName: "\uACE0\uB300 \uB9C8\uC0AC\uC9C0 \uAE30\uC220"
+  upgradeType: 0
+  tier: 9
+  maxLevel: 20
+  _currentLevel: 0
+  baseEffect: 1
+  effectGrowthRate: 1.15
+  baseCost: 10
+  costGrowthRate: 1.3
+  costTierExponent: 2.5
+  _tierMultiplier: 10000

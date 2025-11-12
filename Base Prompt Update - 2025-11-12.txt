@@ -1,0 +1,257 @@
+==================================================================
+[2025-11-12 업데이트 사항]
+==================================================================
+
+[중요 버그 수정]
+
+1. **UnityEditor 사용 금지**
+   - 런타임 스크립트에서는 `using UnityEditor;`를 절대 사용하지 말 것
+   - UnityEditor는 에디터 전용 네임스페이스이며, 런타임에서 사용 시 빌드 오류 및 Inspector 오류 발생
+   - Editor 폴더 내 스크립트만 UnityEditor 사용 가능
+
+2. **SerializeField null 참조 문제**
+   - 프리팹에서 사용하지 않는 SerializeField는 제거하거나 동적으로 찾을 것
+   - UI 요소들은 Awake()에서 FindChildComponent로 동적 탐색
+   - Inspector에서 설정해야 하는 데이터만 public 또는 [SerializeField]로 노출
+
+==================================================================
+
+[GameManager 업데이트]
+
+GameManager의 Gold 관련 타입을 변경해줘.
+- Gold : double 타입으로 변경 (기존 int). 큰 숫자 지원 (조, 경 단위).
+- GoldPerClick : double 타입으로 변경 (기존 int).
+- GoldPerSecond : double 타입으로 변경 (기존 int).
+- setter에서 비교 시 System.Math.Abs를 사용해서 오차 범위(0.001) 내에서 비교.
+
+GameManager에 GPCItemData 초기화 추가:
+- ResetProgress() 함수에서 GPCItemDataManager.Instance.ResetAllLevels() 호출.
+
+==================================================================
+
+[SaveManager 업데이트]
+
+SaveData 클래스를 다음과 같이 업데이트해줘:
+- Gold, GoldPerClick, GoldPerSecond를 double 타입으로 변경.
+- ItemDataLevels : Dictionary<string, int> 타입. GPCItemData의 레벨 정보 저장.
+
+Save 함수:
+- GPCItemDataManager.Instance.GetAllLevels()로 모든 아이템 레벨 저장.
+
+Load 함수:
+- GPCItemDataManager.Instance.LoadAllLevels()로 모든 아이템 레벨 복원.
+
+==================================================================
+
+[GPCItemData - ScriptableObject]
+
+GPCItemData ScriptableObject를 만들어줘.
+공통 요구사항을 지켜줘. ScriptableObject를 상속 받아.
+
+기본 정보:
+- itemName : string. 아이템 이름 (예: "기본 지압법").
+- upgradeType : EUpgradeType (GPC 또는 GPS).
+- tier : int. 1~10 범위. [Range(1, 10)] 사용.
+
+레벨 설정:
+- maxLevel : int. 최대 업그레이드 레벨. 기본값 20.
+- _runtimeLevel : int. [System.NonSerialized]로 선언. ScriptableObject 에셋에 저장하지 않음.
+
+효과 설정:
+- baseEffect : double. Tier 1 Level 1의 기본 효과.
+- effectGrowthRate : double. 레벨당 효과 증가율 (1.15 = 15% 증가).
+
+비용 설정:
+- baseCost : double. Tier 1 Level 1의 기본 비용.
+- costGrowthRate : double. 레벨당 비용 증가율 (GPC: 1.25, GPS: 1.3 권장).
+- costTierExponent : double. 티어별 비용 지수 (GPC: 2.2, GPS: 2.4 권장).
+
+티어별 배수 (자동 계산):
+- _tierMultiplier : double. [SerializeField]로 선언.
+- Tier 1: 1, Tier 2: 3, Tier 3: 10, Tier 4: 30, Tier 5: 100
+- Tier 6: 300, Tier 7: 1000, Tier 8: 3000, Tier 9: 10000, Tier 10: 30000
+
+공식:
+- 현재 효과 = baseEffect × (effectGrowthRate ^ runtimeLevel) × tierMultiplier (올림)
+  - 레벨 0일 때는 0 반환
+- 다음 레벨 효과 = baseEffect × (effectGrowthRate ^ (runtimeLevel + 1)) × tierMultiplier (올림)
+- 효과 증가 = (다음 레벨 원본 값 - 현재 레벨 원본 값)의 올림. 최소 1 보장.
+- 업그레이드 비용 = baseCost × (costGrowthRate ^ (runtimeLevel + 1)) × (tierMultiplier ^ costTierExponent) (올림)
+
+주요 함수:
+- double GetCurrentEffect() : 현재 레벨의 효과.
+- double GetNextLevelEffect() : 다음 레벨의 효과.
+- double GetEffectIncrease() : 업그레이드 시 증가하는 효과량.
+- double GetUpgradeCost() : 업그레이드 비용.
+- bool Upgrade() : 레벨 증가. 최대 레벨이면 false 반환.
+- void ResetLevel() : 레벨을 0으로 초기화.
+- void SetLevel(int level) : 레벨 직접 설정 (세이브 로드용).
+- bool IsMaxLevel() : 최대 레벨 도달 여부.
+
+OnValidate():
+- tier 값에 따라 _tierMultiplier 자동 계산.
+
+숫자 표시:
+- 모든 숫자는 정수로 올림(Ceiling)하여 표시.
+- 소수점 없이 표시.
+
+EUpgradeType 열거형 정의:
+- GPC : Gold Per Click
+- GPS : Gold Per Second
+
+==================================================================
+
+[GPCItemDataManager]
+
+GPCItemDataManager에 붙일 스크립트를 만들어줘.
+공통 요구사항을 지켜줘. Singleton을 상속 받아.
+
+- _allItemData : List<GPCItemData>. 모든 GPC/GPS 아이템 데이터 목록.
+  - Inspector에서 수동으로 설정하거나 Resources 폴더에서 자동 로드.
+
+Awake():
+- _allItemData가 비어있으면 Resources.LoadAll<GPCItemData>로 자동 로드.
+
+주요 함수:
+- void ResetAllLevels() : 모든 아이템의 레벨을 0으로 초기화.
+- GPCItemData FindItemData(EUpgradeType type, int tier) : 특정 타입/티어의 아이템 찾기.
+- Dictionary<string, int> GetAllLevels() : 모든 아이템의 레벨을 Dictionary로 반환.
+  - Key 형식: "GPC_1", "GPS_2" 등.
+- void LoadAllLevels(Dictionary<string, int> levels) : Dictionary로부터 레벨 복원.
+  - SetLevel() 사용하여 직접 설정.
+  - 없는 키는 레벨 0으로 초기화.
+
+==================================================================
+
+[UI_GPCItem 업데이트]
+
+UI_GPCItem을 다음과 같이 업데이트해줘.
+공통 요구사항을 지켜줘. UI_Base를 상속 받아. GameManager의 코드를 이해하고 있어야 해.
+
+기존 GPCUpgradeType 방식을 제거하고 GPCItemData 기반으로 변경:
+
+데이터:
+- _itemData : GPCItemData. public으로 선언 (Inspector에서 설정).
+
+UI 요소 (동적으로 찾음):
+- _clickButton : Button. "ClickButton"으로 찾기.
+- _itemNameText : TMP_Text. "GPCITEMText"로 찾기.
+- _currentStatText : TMP_Text. "GPCSTATText"로 찾기.
+- _upgradeStatText : TMP_Text. "GPCUPGStat"로 찾기.
+- _upgradeCostText : TMP_Text. "GPCUPGCost"로 찾기.
+
+Awake():
+- base.Awake() 호출.
+- FindChildComponent로 모든 UI 요소 찾기.
+
+RefreshUI():
+- itemName을 _itemNameText에 표시.
+- GetCurrentEffect()를 _currentStatText에 표시. 형식: "+12G/터치" 또는 "+5G/초".
+- IsMaxLevel()이면 "MAX" 표시.
+- 아니면 GetEffectIncrease()를 _upgradeStatText에 표시.
+- GetUpgradeCost()를 _upgradeCostText에 표시.
+- UpdateButtonState() 호출.
+
+OnUpgradeButtonClick():
+- 최대 레벨 체크.
+- 골드 부족 체크.
+- effectIncrease = GetEffectIncrease() 계산.
+- 골드 차감.
+- GPC 또는 GPS에 effectIncrease 추가.
+- Upgrade() 호출하여 레벨 증가.
+- RefreshUI() 호출.
+
+UpdateButtonState():
+- 최대 레벨이면 버튼 비활성화.
+- 골드가 부족하면 버튼 비활성화.
+- 충분하면 버튼 활성화.
+
+FormatNumber(double number):
+- 올림 처리 후 정수로 표시.
+- 1000 미만: "123"
+- 1000 이상: "1K", "15M", "200B", "5T" 형식.
+
+SetItemData(GPCItemData itemData):
+- 외부에서 itemData 설정.
+
+GetItemData():
+- 현재 itemData 반환.
+
+==================================================================
+
+[숫자 표시 규칙]
+
+모든 골드 관련 숫자는 다음 규칙을 따라:
+- 정수로 올림(Math.Ceiling) 처리.
+- 소수점 없이 표시.
+- K, M, B, T 단위 사용:
+  - 1000 미만: "123"
+  - 1000~999999: "1K", "999K"
+  - 1000000~999999999: "1M", "999M"
+  - 1000000000~999999999999: "1B", "999B"
+  - 1000000000000 이상: "1T", "999T"
+
+==================================================================
+
+[권장 밸런스 수치]
+
+30일 플레이타임 기준:
+
+GPC (Gold Per Click):
+- baseEffect: 10.0
+- effectGrowthRate: 1.15 (15% 증가)
+- baseCost: 10.0
+- costGrowthRate: 1.25 (25% 증가)
+- costTierExponent: 2.2
+- maxLevel: 20
+
+GPS (Gold Per Second):
+- baseEffect: 5.0
+- effectGrowthRate: 1.15 (15% 증가)
+- baseCost: 25.0
+- costGrowthRate: 1.3 (30% 증가)
+- costTierExponent: 2.4
+- maxLevel: 20
+
+업그레이드 주기:
+- 초반: 5분에 1회
+- 후반: 수 시간에 1회
+
+==================================================================
+
+[Unity Editor 유틸리티]
+
+CleanupNullReferences 에디터 스크립트:
+- Editor 폴더에 배치.
+- Tools > Cleanup Null References 메뉴.
+- 씬과 프리팹에서 null 참조 찾아서 로그 출력.
+- GameObject.FindObjectsOfType과 GetComponents 사용.
+
+UpgradeBalanceTest 스크립트:
+- 업그레이드 밸런스 테스트용.
+- Context Menu로 실행: "GPC Tier 1 밸런스 테스트", "모든 티어 밸런스 테스트" 등.
+- 각 레벨별 비용, 효과 증가, 누적 효과를 로그로 출력.
+
+==================================================================
+
+[개발 시 주의사항]
+
+1. **ScriptableObject 데이터 관리**:
+   - 런타임 데이터는 [System.NonSerialized]로 선언.
+   - 에셋 파일에 런타임 데이터가 저장되지 않도록 주의.
+   - 세이브/로드는 별도 시스템으로 관리.
+
+2. **null 참조 방지**:
+   - SerializeField는 필요한 곳에만 사용.
+   - UI 요소는 동적으로 찾기.
+   - Inspector에서 설정할 데이터만 노출.
+
+3. **타입 변환 주의**:
+   - int → double 변환 시 기존 코드 호환성 확인.
+   - double 비교 시 오차 범위 고려 (Math.Abs 사용).
+
+4. **올림 처리**:
+   - 효과 증가량 계산 시 올림 전 원본 값으로 차이 계산.
+   - 최소 1 보장으로 의미없는 업그레이드 방지.
+
+==================================================================

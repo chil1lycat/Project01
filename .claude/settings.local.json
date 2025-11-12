@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(for file in \"UI/UI_ConfirmPopup.cs\" \"UI/ClickerGame/UI_GPSItem.cs\" \"UI/ClickerGame/UI_ClickerGame.cs\" \"UI/ClickerGame/UI_ProcessItem.cs\" \"Managers/StoryManager.cs\" \"UI/Story/UI_Dialogue.cs\")",
+      "Bash(do sed -i '/^using UnityEditor;$/d' \"$file\")",
+      "Bash(echo:*)",
+      "Bash(done)"
     ],
     "deny": [],
     "ask": []
